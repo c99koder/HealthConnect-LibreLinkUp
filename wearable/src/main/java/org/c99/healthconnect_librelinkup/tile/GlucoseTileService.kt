@@ -33,6 +33,7 @@ import androidx.wear.protolayout.ResourceBuilders
 import androidx.wear.protolayout.TimelineBuilders
 import androidx.wear.protolayout.material.Chip
 import androidx.wear.protolayout.material.ChipColors
+import androidx.wear.protolayout.material.Colors
 import androidx.wear.protolayout.material.Text
 import androidx.wear.protolayout.material.Typography
 import androidx.wear.protolayout.material.layouts.PrimaryLayout
@@ -110,11 +111,11 @@ class GlucoseTileService : SuspendingTileService() {
             }
 
             val color = when (glucose.getInt(DataLayerListenerService.COLOR_KEY, -1)) {
-                1 -> 0xFF00FF00 //Lime
-                2 -> 0xFFFFFF00 //Yellow
-                3 -> 0xFFFFA500 //Orange
-                4 -> 0xFFFF0000 //Red
-                else -> 0xFF808080 //Gray
+                1 -> resources.getColor(R.color.normal, theme)
+                2 -> resources.getColor(R.color.high, theme)
+                3 -> resources.getColor(R.color.very_high, theme)
+                4 -> resources.getColor(R.color.low, theme)
+                else -> Colors.DEFAULT.primary
             }
 
             val time = ZonedDateTime.parse(
@@ -128,7 +129,7 @@ class GlucoseTileService : SuspendingTileService() {
                         tileLayout(this,
                             glucose.getFloat(DataLayerListenerService.GLUCOSE_KEY, 0f),
                             icon,
-                            color.toInt(),
+                            color,
                             DateUtils.getRelativeTimeSpanString(time.toEpochSecond()*1000L).toString(),
                             glucose.getInt(DataLayerListenerService.UNITS_KEY, 1))).build()
                 ).build()
@@ -156,23 +157,23 @@ private fun tileLayout(context: Context, glucose: Float, arrow: String, color: I
         .setResponsiveContentInsetEnabled(true)
         .setPrimaryLabelTextContent(Text.Builder(context, "Blood Glucose")
             .setTypography(Typography.TYPOGRAPHY_TITLE3)
-            .setColor(argb(0xFFFFFFFF.toInt()))
+            .setColor(argb(Colors.DEFAULT.primary))
             .build())
         .setSecondaryLabelTextContent(Text.Builder(context, secondaryLabel)
             .setTypography(Typography.TYPOGRAPHY_CAPTION3)
-            .setColor(argb(0xFF808080.toInt()))
+            .setColor(argb(Colors.DEFAULT.onSurface))
             .build())
         .setContent(
             Chip.Builder(context, ModifiersBuilders.Clickable.Builder().build(), buildDeviceParameters(context.resources))
-                .setChipColors(ChipColors(argb(color), argb(0xFF000000.toInt())))
+                .setChipColors(ChipColors(argb(color), argb(context.getColor(R.color.glucose_text))))
                 .setCustomContent(
                     LayoutElementBuilders.Row.Builder()
                         .addContent(
                             LayoutElementBuilders.Image.Builder()
-                                .setResourceId("arrow_right")
+                                .setResourceId(arrow)
                                 .setWidth(dp(24f))
                                 .setHeight(dp(24f))
-                                .setColorFilter(ColorFilter.Builder().setTint(argb(0xFF000000.toInt())).build())
+                                .setColorFilter(ColorFilter.Builder().setTint(argb(context.getColor(R.color.glucose_text))).build())
                                 .build()
 
                         )
@@ -186,6 +187,7 @@ private fun tileLayout(context: Context, glucose: Float, arrow: String, color: I
                                             else -> String.format("%.1f", glucose)
                                         })
                                         .setTypography(Typography.TYPOGRAPHY_TITLE1)
+                                        .setColor(argb(context.getColor(R.color.glucose_text)))
                                         .build()
                                 )
                                 .addContent(
@@ -195,6 +197,7 @@ private fun tileLayout(context: Context, glucose: Float, arrow: String, color: I
                                             else -> " mmol"
                                         })
                                         .setTypography(Typography.TYPOGRAPHY_CAPTION2)
+                                        .setColor(argb(context.getColor(R.color.glucose_text)))
                                         .build()
                                 )
                                 .build()
@@ -211,11 +214,12 @@ private fun noDataLayout(context: Context): LayoutElementBuilders.LayoutElement 
     return PrimaryLayout.Builder(buildDeviceParameters(context.resources))
         .setResponsiveContentInsetEnabled(true)
         .setPrimaryLabelTextContent(Text.Builder(context, "No Data")
-            .setTypography(Typography.TYPOGRAPHY_TITLE1)
-            .setColor(argb(0xFFFFFFFF.toInt()))
+            .setTypography(Typography.TYPOGRAPHY_TITLE3)
+            .setColor(argb(Colors.DEFAULT.primary))
             .build())
         .setSecondaryLabelTextContent(Text.Builder(context, "Check your username and password in the companion app on your phone")
             .setTypography(Typography.TYPOGRAPHY_BODY2)
+            .setColor(argb(Colors.DEFAULT.onSurface))
             .setMaxLines(4)
             .build())
         .build()
@@ -229,7 +233,46 @@ private fun noDataLayout(context: Context): LayoutElementBuilders.LayoutElement 
     showBackground = true
 )
 @Composable
-fun TilePreview() {
+fun NoDataPreview() {
     LayoutRootPreview(root = noDataLayout(LocalContext.current))
-//    LayoutRootPreview(root = tileLayout(LocalContext.current, 100f, "arrow_right", 0xFF00FF00.toInt(), "15m ago", 1))
+}
+@Preview(
+    device = Devices.WEAR_OS_SMALL_ROUND,
+    showSystemUi = true,
+    backgroundColor = 0xff000000,
+    showBackground = true
+)
+@Composable
+fun LowPreview() {
+    LayoutRootPreview(root = tileLayout(LocalContext.current, 60f, "arrow_down", LocalContext.current.getColor(R.color.low), "15m ago", 1))
+}
+@Preview(
+    device = Devices.WEAR_OS_SMALL_ROUND,
+    showSystemUi = true,
+    backgroundColor = 0xff000000,
+    showBackground = true
+)
+@Composable
+fun NormalPreview() {
+    LayoutRootPreview(root = tileLayout(LocalContext.current, 100f, "arrow_right", LocalContext.current.getColor(R.color.normal), "15m ago", 1))
+}
+@Preview(
+    device = Devices.WEAR_OS_SMALL_ROUND,
+    showSystemUi = true,
+    backgroundColor = 0xff000000,
+    showBackground = true
+)
+@Composable
+fun HighPreview() {
+    LayoutRootPreview(root = tileLayout(LocalContext.current, 180f, "arrow_up_right", LocalContext.current.getColor(R.color.high), "15m ago", 1))
+}
+@Preview(
+    device = Devices.WEAR_OS_SMALL_ROUND,
+    showSystemUi = true,
+    backgroundColor = 0xff000000,
+    showBackground = true
+)
+@Composable
+fun VeryHighPreview() {
+    LayoutRootPreview(root = tileLayout(LocalContext.current, 300f, "arrow_up", LocalContext.current.getColor(R.color.very_high), "15m ago", 1))
 }
