@@ -27,6 +27,7 @@ Syncs the latest glucose reading from Freestyle Libre sensors via LibreLinkUp to
  * Android 9.0+
  * [Google HealthConnect](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata) (This is built-in on Android 14+)
  * Android WearOS 3.0+
+ * Freestyle Libre 2 or 3 glucose sensor linked to a [Freestyle LibreLinkUp](https://librelinkup.com/) account (see below)
 
 ## Install
 
