@@ -139,7 +139,7 @@ class GlucoseTileService : SuspendingTileService() {
                 .setTileTimeline(singleTileTimeline).build()
         }
 
-            val singleTileTimeline = TimelineBuilders.Timeline.Builder().addTimelineEntry(
+        val singleTileTimeline = TimelineBuilders.Timeline.Builder().addTimelineEntry(
             TimelineBuilders.TimelineEntry.Builder().setLayout(
                 LayoutElementBuilders.Layout.Builder().setRoot(noDataLayout(this)).build()
             ).build()
@@ -244,7 +244,7 @@ fun NoDataPreview() {
 )
 @Composable
 fun LowPreview() {
-    LayoutRootPreview(root = tileLayout(LocalContext.current, 60f, "arrow_down", LocalContext.current.getColor(R.color.low), "15m ago", 1))
+    LayoutRootPreview(root = tileLayout(LocalContext.current, 60f, "arrow_down", LocalContext.current.getColor(R.color.low), "5 minutes ago", 1))
 }
 @Preview(
     device = Devices.WEAR_OS_SMALL_ROUND,
@@ -254,7 +254,7 @@ fun LowPreview() {
 )
 @Composable
 fun NormalPreview() {
-    LayoutRootPreview(root = tileLayout(LocalContext.current, 100f, "arrow_right", LocalContext.current.getColor(R.color.normal), "15m ago", 1))
+    LayoutRootPreview(root = tileLayout(LocalContext.current, 100f, "arrow_right", LocalContext.current.getColor(R.color.normal), "10 minutes ago", 1))
 }
 @Preview(
     device = Devices.WEAR_OS_SMALL_ROUND,
@@ -264,7 +264,7 @@ fun NormalPreview() {
 )
 @Composable
 fun HighPreview() {
-    LayoutRootPreview(root = tileLayout(LocalContext.current, 180f, "arrow_up_right", LocalContext.current.getColor(R.color.high), "15m ago", 1))
+    LayoutRootPreview(root = tileLayout(LocalContext.current, 180f, "arrow_up_right", LocalContext.current.getColor(R.color.high), "15 minutes ago", 1))
 }
 @Preview(
     device = Devices.WEAR_OS_SMALL_ROUND,
@@ -274,5 +274,5 @@ fun HighPreview() {
 )
 @Composable
 fun VeryHighPreview() {
-    LayoutRootPreview(root = tileLayout(LocalContext.current, 300f, "arrow_up", LocalContext.current.getColor(R.color.very_high), "15m ago", 1))
+    LayoutRootPreview(root = tileLayout(LocalContext.current, 300f, "arrow_up", LocalContext.current.getColor(R.color.very_high), "20 minutes ago", 1))
 }

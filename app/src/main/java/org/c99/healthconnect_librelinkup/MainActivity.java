@@ -17,6 +17,7 @@
 package org.c99.healthconnect_librelinkup;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -59,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
         emailAddress = findViewById(R.id.email);
         password = findViewById(R.id.password);
         status = findViewById(R.id.status);
+        TextView version = findViewById(R.id.version);
+        try {
+            version.setText("Version " + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            version.setVisibility(View.GONE);
+        }
 
         try {
             SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
