@@ -16,10 +16,15 @@
 
 package org.c99.healthconnect_librelinkup;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -86,6 +91,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.disableBatteryRestrictions).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            }
+        });
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -100,6 +115,18 @@ public class MainActivity extends AppCompatActivity {
                 HealthPermission.getReadPermission(JvmClassMappingKt.getKotlinClass(BloodGlucoseRecord.class)),
                 HealthPermission.getWritePermission(JvmClassMappingKt.getKotlinClass(BloodGlucoseRecord.class))
                 )));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
+            findViewById(R.id.batteryRestrictions).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.batteryRestrictions).setVisibility(View.VISIBLE);
+        }
     }
 
     private class LoginTask extends AsyncTask<Void, Void, LibreLinkUp.LoginResult> {

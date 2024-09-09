@@ -92,12 +92,29 @@
                 android:gravity="top|center_horizontal"
                 android:text="@string/status_login" />
 
+            <LinearLayout
+                android:id="@+id/batteryRestrictions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/battery_restricted"/>
+                <Button
+                    android:id="@+id/disableBatteryRestrictions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/disable_battery_restrictions" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/version"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="0" />
+                android:gravity="center" />
         </LinearLayout>
 
     </LinearLayout>
