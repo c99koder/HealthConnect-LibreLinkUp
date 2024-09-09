@@ -136,6 +136,7 @@ class GlucoseTileService : SuspendingTileService() {
             ).build()
 
             return TileBuilders.Tile.Builder().setResourcesVersion(RESOURCES_VERSION)
+                .setFreshnessIntervalMillis(60 * 1000)
                 .setTileTimeline(singleTileTimeline).build()
         }
 
