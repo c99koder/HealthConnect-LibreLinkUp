@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2024 Sam Steele
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,6 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.HealthConnectLibreLinkUp" parent="Base.Theme.HealthConnectLibreLinkUp">
-    </style>
-    <!-- Base application theme. -->
-    <style name="Base.Theme.HealthConnectLibreLinkUp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-    </style>
+<resources>
+    <style name="Theme.HealthConnectLibreLinkUp" parent="Theme.Material3.DayNight.NoActionBar"/>
 </resources>

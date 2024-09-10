@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.c99.healthconnect_librelinkup
 
-package org.c99.healthconnect_librelinkup;
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-
-public class BootReceiver extends BroadcastReceiver {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        new LibreLinkUp(context.getApplicationContext()).schedule();
+class BootReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        LibreLinkUp(context.applicationContext).schedule()
     }
 }

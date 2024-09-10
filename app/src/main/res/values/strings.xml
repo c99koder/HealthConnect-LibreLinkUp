@@ -21,6 +21,6 @@
     <string name="prompt_password">Password</string>
     <string name="button_login">Login to LibreLinkUp</string>
     <string name="status_login">Enter your email address and password above to login to LibreLinkUp</string>
-    <string name="battery_restricted">⚠️ This app is currently being restricted from running in the background.  Tap the button bellow to enable unrestricted background usage.</string>
+    <string name="battery_restricted">⚠️ This app is currently being restricted from running in the background</string>
     <string name="disable_battery_restrictions">Disable Battery Optimizations</string>
 </resources>
