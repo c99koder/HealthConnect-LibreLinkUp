@@ -84,6 +84,7 @@ public class LibreLinkUp {
                             .addTag("sync")
                             .build());
             Toast.makeText(context, "Glucose sync job scheduled", Toast.LENGTH_SHORT).show();
+            android.util.Log.i("LibreLinkUp", "Glucose sync job scheduled");
         }
     }
 
@@ -98,6 +99,7 @@ public class LibreLinkUp {
             authTicket.expires = cache.getLong("auth_expires", 0);
         } catch (Exception e) {
             authTicket = null;
+            e.printStackTrace();
         }
     }
 

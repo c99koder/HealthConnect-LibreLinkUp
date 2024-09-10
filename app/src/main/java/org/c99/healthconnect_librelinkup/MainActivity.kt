@@ -117,11 +117,14 @@ class LoginViewModel: ViewModel() {
 }
 
 class MainActivity : ComponentActivity() {
-    private val libreLinkUp: LibreLinkUp = LibreLinkUp(this)
+    private lateinit var libreLinkUp: LibreLinkUp
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        libreLinkUp = LibreLinkUp(this);
+
         enableEdgeToEdge()
         setContent {
             MainView(
@@ -195,6 +198,7 @@ class MainActivity : ComponentActivity() {
                 }
             } catch (e: IllegalStateException) {
                 //HealthConnect not installed
+                e.printStackTrace()
             }
         }
     }
