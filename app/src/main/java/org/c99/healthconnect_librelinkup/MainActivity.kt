@@ -139,11 +139,6 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-
-        viewModel.setVersion("Version " + packageManager.getPackageInfo(packageName, 0).versionName)
-
-        libreLinkUp.schedule()
-
         val availabilityStatus = HealthConnectClient.getSdkStatus(this)
         if (availabilityStatus == HealthConnectClient.SDK_UNAVAILABLE) {
             Toast.makeText(this, "HealthConnect is unavailable", Toast.LENGTH_LONG).show()
@@ -172,22 +167,30 @@ class MainActivity : ComponentActivity() {
             return
         }
         checkPermissions()
+
+        viewModel.setVersion("Version " + packageManager.getPackageInfo(packageName, 0).versionName)
     }
 
     private fun checkPermissions() {
-        val requestPermissions = registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { _ ->
+        val permissions =
+            setOf(
+                HealthPermission.getReadPermission(BloodGlucoseRecord::class),
+                HealthPermission.getWritePermission(BloodGlucoseRecord::class),
+            )
+
+        val requestPermissions = registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { granted ->
+            if (granted.containsAll(permissions)) {
+                libreLinkUp.schedule()
+            }
         }
 
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val permissions =
-                    setOf(
-                        HealthPermission.getReadPermission(BloodGlucoseRecord::class),
-                        HealthPermission.getWritePermission(BloodGlucoseRecord::class),
-                    )
                 val granted =
                     HealthConnectClient.getOrCreate(this@MainActivity).permissionController.getGrantedPermissions()
-                if (!granted.containsAll(permissions)) {
+                if (granted.containsAll(permissions)) {
+                    libreLinkUp.schedule()
+                } else {
                     requestPermissions.launch(permissions)
                 }
             } catch (e: IllegalStateException) {
