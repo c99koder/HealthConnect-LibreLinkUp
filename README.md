@@ -19,7 +19,9 @@
 Syncs the latest glucose reading from Freestyle Libre sensors via LibreLinkUp to HealthConnect and WearOS
 
 ![App Screenshot](app.png)
+
 ![Complication Screenshot](complication.png)
+
 ![Tile Screenshot](wearable/src/main/res/drawable-round/tile_preview.png)
 
 ## Requirements
@@ -31,7 +33,7 @@ Syncs the latest glucose reading from Freestyle Libre sensors via LibreLinkUp to
 
 ## Install
 
-Install `app-release.apk` on your phone and the optional `wearable-release.apk` on your WearOS watch
+Download the [latest release](https://github.com/c99koder/HealthConnect-LibreLinkUp/releases/latest) and install `app-release.apk` on your phone and the optional `wearable-release.apk` on your WearOS watch
 
 ## Usage
 
