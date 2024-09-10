@@ -17,11 +17,15 @@
 package org.c99.healthconnect_librelinkup
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -139,6 +143,34 @@ class MainActivity : ComponentActivity() {
         viewModel.setVersion("Version " + packageManager.getPackageInfo(packageName, 0).versionName)
 
         libreLinkUp.schedule()
+
+        val availabilityStatus = HealthConnectClient.getSdkStatus(this)
+        if (availabilityStatus == HealthConnectClient.SDK_UNAVAILABLE) {
+            Toast.makeText(this, "HealthConnect is unavailable", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+        if (availabilityStatus == HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED) {
+            try {
+                startActivity(
+                    Intent(Intent.ACTION_VIEW).apply {
+                        setPackage("com.android.vending")
+                        data = Uri.parse("market://details?id=com.google.android.apps.healthdata")
+                        putExtra("overlay", true)
+                        putExtra("callerId", packageName)
+                    }
+                )
+            } catch (e: ActivityNotFoundException) {
+                startActivity(
+                    Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata")
+                    }
+                )
+            }
+            Toast.makeText(this, "HealthConnect not installed or requires an update", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
         checkPermissions()
     }
 
@@ -147,14 +179,19 @@ class MainActivity : ComponentActivity() {
         }
 
         CoroutineScope(Dispatchers.Main).launch {
-            val permissions =
-                setOf(
-                    HealthPermission.getReadPermission(BloodGlucoseRecord::class),
-                    HealthPermission.getWritePermission(BloodGlucoseRecord::class),
-                )
-            val granted = HealthConnectClient.getOrCreate(this@MainActivity).permissionController.getGrantedPermissions()
-            if (!granted.containsAll(permissions)) {
-                requestPermissions.launch(permissions)
+            try {
+                val permissions =
+                    setOf(
+                        HealthPermission.getReadPermission(BloodGlucoseRecord::class),
+                        HealthPermission.getWritePermission(BloodGlucoseRecord::class),
+                    )
+                val granted =
+                    HealthConnectClient.getOrCreate(this@MainActivity).permissionController.getGrantedPermissions()
+                if (!granted.containsAll(permissions)) {
+                    requestPermissions.launch(permissions)
+                }
+            } catch (e: IllegalStateException) {
+                //HealthConnect not installed
             }
         }
     }
