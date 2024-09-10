@@ -30,7 +30,13 @@ import androidx.health.connect.client.units.BloodGlucose;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.AvailabilityException;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -39,6 +45,7 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 
 import kotlin.coroutines.Continuation;
 import kotlin.coroutines.CoroutineContext;
@@ -92,18 +99,23 @@ public class SyncWorker extends Worker {
                 }
             });
 
-            try {
-                getApplicationContext().getPackageManager().getPackageInfo("com.google.android.wearable.app", PackageManager.GET_META_DATA);
-                PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/glucose");
-                putDataMapReq.getDataMap().putFloat(GLUCOSE_KEY, result.data.get(0).glucoseMeasurement.Value);
-                putDataMapReq.getDataMap().putInt(COLOR_KEY, result.data.get(0).glucoseMeasurement.MeasurementColor);
-                putDataMapReq.getDataMap().putInt(TREND_ARROW_KEY, result.data.get(0).glucoseMeasurement.TrendArrow);
-                putDataMapReq.getDataMap().putInt(UNITS_KEY, result.data.get(0).glucoseMeasurement.GlucoseUnits);
-                putDataMapReq.getDataMap().putString(TIMESTAMP_KEY, result.data.get(0).glucoseMeasurement.FactoryTimestamp);
-                PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-                Tasks.await(Wearable.getDataClient(getApplicationContext()).putDataItem(putDataReq));
-            } catch (PackageManager.NameNotFoundException e) {
-                //android wear app is not installed
+            if(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getApplicationContext()) == com.google.android.gms.common.ConnectionResult.SUCCESS) {
+                try {
+                    DataClient dc = Wearable.getDataClient(getApplicationContext());
+                    Task<Void> t = GoogleApiAvailability.getInstance().checkApiAvailability(dc);
+                    Tasks.await(t);
+
+                    PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/glucose");
+                    putDataMapReq.getDataMap().putFloat(GLUCOSE_KEY, result.data.get(0).glucoseMeasurement.Value);
+                    putDataMapReq.getDataMap().putInt(COLOR_KEY, result.data.get(0).glucoseMeasurement.MeasurementColor);
+                    putDataMapReq.getDataMap().putInt(TREND_ARROW_KEY, result.data.get(0).glucoseMeasurement.TrendArrow);
+                    putDataMapReq.getDataMap().putInt(UNITS_KEY, result.data.get(0).glucoseMeasurement.GlucoseUnits);
+                    putDataMapReq.getDataMap().putString(TIMESTAMP_KEY, result.data.get(0).glucoseMeasurement.FactoryTimestamp);
+                    PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+                    Tasks.await(dc.putDataItem(putDataReq));
+                } catch (Exception e) {
+                    //Wearable API not available
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
