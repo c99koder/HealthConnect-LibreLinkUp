@@ -18,6 +18,7 @@ package org.c99.healthconnect_librelinkup;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 import androidx.health.connect.client.HealthConnectClient;
@@ -91,14 +92,19 @@ public class SyncWorker extends Worker {
                 }
             });
 
-            PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/glucose");
-            putDataMapReq.getDataMap().putFloat(GLUCOSE_KEY, result.data.get(0).glucoseMeasurement.Value);
-            putDataMapReq.getDataMap().putInt(COLOR_KEY, result.data.get(0).glucoseMeasurement.MeasurementColor);
-            putDataMapReq.getDataMap().putInt(TREND_ARROW_KEY, result.data.get(0).glucoseMeasurement.TrendArrow);
-            putDataMapReq.getDataMap().putInt(UNITS_KEY, result.data.get(0).glucoseMeasurement.GlucoseUnits);
-            putDataMapReq.getDataMap().putString(TIMESTAMP_KEY, result.data.get(0).glucoseMeasurement.FactoryTimestamp);
-            PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-            Tasks.await(Wearable.getDataClient(getApplicationContext()).putDataItem(putDataReq));
+            try {
+                getApplicationContext().getPackageManager().getPackageInfo("com.google.android.wearable.app", PackageManager.GET_META_DATA);
+                PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/glucose");
+                putDataMapReq.getDataMap().putFloat(GLUCOSE_KEY, result.data.get(0).glucoseMeasurement.Value);
+                putDataMapReq.getDataMap().putInt(COLOR_KEY, result.data.get(0).glucoseMeasurement.MeasurementColor);
+                putDataMapReq.getDataMap().putInt(TREND_ARROW_KEY, result.data.get(0).glucoseMeasurement.TrendArrow);
+                putDataMapReq.getDataMap().putInt(UNITS_KEY, result.data.get(0).glucoseMeasurement.GlucoseUnits);
+                putDataMapReq.getDataMap().putString(TIMESTAMP_KEY, result.data.get(0).glucoseMeasurement.FactoryTimestamp);
+                PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+                Tasks.await(Wearable.getDataClient(getApplicationContext()).putDataItem(putDataReq));
+            } catch (PackageManager.NameNotFoundException e) {
+                //android wear app is not installed
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure();
