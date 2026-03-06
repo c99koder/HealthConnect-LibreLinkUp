@@ -40,14 +40,21 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -61,6 +68,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -84,6 +92,7 @@ import kotlinx.coroutines.launch
 import org.c99.healthconnect_librelinkup.ui.theme.HealthConnectLibreLinkUpTheme
 
 data class LoginUiState(
+    var url: String = "",
     var email: String = "",
     var password: String = "",
     var status: String = "",
@@ -94,6 +103,10 @@ data class LoginUiState(
 class LoginViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
+    fun setUrl(url: String) {
+        _uiState.value = _uiState.value.copy(url = url)
+    }
 
     fun setEmail(email: String) {
         _uiState.value = _uiState.value.copy(email = email)
@@ -128,11 +141,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MainView(
+                onUrlChanged = { libreLinkUp.setUrl(it) },
                 onLoginButtonClicked = { onLoginButtonClicked() },
                 onDisableBatteryRestrictionsButtonClicked = { onDisableBatteryRestrictionsButtonClicked() }
             )
         }
 
+        viewModel.setUrl(libreLinkUp.url)
         val user = libreLinkUp.user
         if (user != null && user.email != null) {
             viewModel.setEmail(user.email)
@@ -271,10 +286,13 @@ fun Modifier.autofill(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MainView(viewModel: LoginViewModel = viewModel(),
+             onUrlChanged: (String) -> Unit = {},
              onLoginButtonClicked: () -> Unit = {},
              onDisableBatteryRestrictionsButtonClicked: () -> Unit = {}) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
+    val apiEndpoints = stringArrayResource(id = R.array.api_endpoints)
+    var expanded by remember { mutableStateOf(false) }
 
     HealthConnectLibreLinkUpTheme {
         Scaffold(
@@ -302,6 +320,35 @@ fun MainView(viewModel: LoginViewModel = viewModel(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = uiState.url,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(id = R.string.prompt_url)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        apiEndpoints.forEach { endpoint ->
+                            DropdownMenuItem(
+                                text = { Text(text = endpoint) },
+                                onClick = {
+                                    viewModel.setUrl(endpoint)
+                                    onUrlChanged(endpoint)
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
                 OutlinedTextField(
                     value = uiState.email,
                     onValueChange = { viewModel.setEmail(it) },

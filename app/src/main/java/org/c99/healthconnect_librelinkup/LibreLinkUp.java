@@ -51,11 +51,11 @@ public class LibreLinkUp {
     private AuthTicket authTicket;
     private User user;
     private Context context;
+    private String LIBRELINKUP_URL = "https://api-us.libreview.io";
 
     private final OkHttpClient client = new OkHttpClient();
     private final Moshi moshi = new Moshi.Builder().build();
 
-    private final String LIBRELINKUP_URL = "https://api-us.libreview.io";
     private final String LIBRELINKUP_VERSION = "4.16.0";
     private final String LIBRELINKUP_PRODUCT = "llu.ios";
     private final Headers LIBRELINKUP_HEADERS = new Headers.Builder()
@@ -97,6 +97,8 @@ public class LibreLinkUp {
         try {
             SharedPreferences cache = getEncryptedSharedPreferences();
 
+            LIBRELINKUP_URL = cache.getString("url", "https://api-us.libreview.io");
+
             authTicket = new AuthTicket();
             authTicket.token = cache.getString("auth_token", null);
             authTicket.duration = cache.getLong("auth_duration", 0);
@@ -116,6 +118,22 @@ public class LibreLinkUp {
 
     public AuthTicket getAuthTicket() {
         return authTicket;
+    }
+
+    public String getUrl() {
+        return LIBRELINKUP_URL;
+    }
+
+    public void setUrl(String url) {
+        LIBRELINKUP_URL = url;
+
+        try {
+            SharedPreferences.Editor cache = getEncryptedSharedPreferences().edit();
+            cache.putString("url", url);
+            cache.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setAuthTicket(AuthTicket ticket) {

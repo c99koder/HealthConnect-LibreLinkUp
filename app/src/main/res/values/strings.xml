@@ -19,8 +19,25 @@
     <string name="title_activity_main">Login to LibreLinkUp</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_url">Server</string>
     <string name="button_login">Login to LibreLinkUp</string>
     <string name="status_login">Enter your email address and password above to login to LibreLinkUp</string>
     <string name="battery_restricted">⚠️ This app is currently being restricted from running in the background</string>
     <string name="disable_battery_restrictions">Disable Battery Optimizations</string>
+    <string-array name="api_endpoints">
+        <item>https://api.libreview.io</item>
+        <item>https://api-ae.libreview.io</item>
+        <item>https://api-ap.libreview.io</item>
+        <item>https://api-au.libreview.io</item>
+        <item>https://api-ca.libreview.io</item>
+        <item>https://api-de.libreview.io</item>
+        <item>https://api-eu.libreview.io</item>
+        <item>https://api-eu2.libreview.io</item>
+        <item>https://api-fr.libreview.io</item>
+        <item>https://api-jp.libreview.io</item>
+        <item>https://api-us.libreview.io</item>
+        <item>https://api-la.libreview.io</item>
+        <item>https://api.libreview.ru</item>
+        <item>https://api-cn.myfreestyle.cn</item>
+    </string-array>
 </resources>
