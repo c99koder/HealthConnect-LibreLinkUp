@@ -1,5 +1,5 @@
 <!--
- Copyright 2024 Sam Steele
+ Copyright 2026 Sam Steele
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ The wearable apk also provides a complication and tile to view the latest readin
 
 ## License
 
-Copyright (C) 2024 Sam Steele. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+Copyright (C) 2026 Sam Steele. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
 http://www.apache.org/licenses/LICENSE-2.0
 
