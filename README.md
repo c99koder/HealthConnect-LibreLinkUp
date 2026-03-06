@@ -39,9 +39,7 @@ Download the [latest release](https://github.com/c99koder/HealthConnect-LibreLin
 
 Open the Freestyle Libre app and tap "Connected Apps" from the menu, then send yourself an invitation to view your data via LibreLinkUp.  Install the LibreLinkUp app on your phone, login, and accept the invitation.
 
-Launch the `LibreLinkUp for HealthConnect` app on your phone, enter your Freestyle LibreLinkUp email address and password, then tap the login button.
-
-You may need to modify the `LIBRELINKUP_URL` variable in `app/src/main/java/org/c99/healthconnect_librelinkup/LibreLinkUp.java` if you're using the servers in a different region.  A future release will include a setting to change regions without recompiling the app.
+Launch the `LibreLinkUp for HealthConnect` app on your phone, select your LibreView region, enter your Freestyle LibreLinkUp email address and password, then tap the login button.
 
 The app will fetch your latest glucose setting every 15 minutes and write the new value into HealthConnect.
 The wearable apk also provides a complication and tile to view the latest reading on your WearOS device.
