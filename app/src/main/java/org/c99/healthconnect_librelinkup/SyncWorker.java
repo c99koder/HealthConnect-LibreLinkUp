@@ -82,8 +82,13 @@ public class SyncWorker extends Worker {
             ZonedDateTime time;
             if (gm.FactoryTimestamp != null) {
                 try {
-                    // Attempt to parse as a datetime string
-                    time = ZonedDateTime.parse((String) gm.FactoryTimestamp + " +0000", DateTimeFormatter.ofPattern("M/d/y h:m:s a Z"));
+                    // Attempt to parse as a datetime string. FactoryTimestamp is in UTC,
+                    // so re-express it in the device's zone with withZoneSameInstant: this
+                    // keeps the same instant but stores the correct local offset. The record
+                    // below uses time.getOffset() for the reading's local date/time, so a
+                    // hardcoded +0000 pushes evening readings past the UTC date boundary onto
+                    // the following day (e.g. after 19:00 for a UTC-5 user).
+                    time = ZonedDateTime.parse((String) gm.FactoryTimestamp + " +0000", DateTimeFormatter.ofPattern("M/d/y h:m:s a Z")).withZoneSameInstant(ZoneId.systemDefault());
                 } catch (DateTimeParseException e) {
                     // If parsing fails, assume it's a long timestamp
                     try {
