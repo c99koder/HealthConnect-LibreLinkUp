@@ -83,7 +83,7 @@ public class SyncWorker extends Worker {
             if (gm.FactoryTimestamp != null) {
                 try {
                     // Attempt to parse as a datetime string
-                    time = ZonedDateTime.parse((String) gm.FactoryTimestamp + " +0000", DateTimeFormatter.ofPattern("M/d/y h:m:s a Z"));
+                    time = ZonedDateTime.parse((String) gm.FactoryTimestamp + " +0000", DateTimeFormatter.ofPattern("M/d/y h:m:s a Z")).withZoneSameInstant(ZoneId.systemDefault());
                 } catch (DateTimeParseException e) {
                     // If parsing fails, assume it's a long timestamp
                     try {
